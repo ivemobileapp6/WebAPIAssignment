@@ -10,13 +10,13 @@ router.post("/login", authController.loginCharityWorker);
 
 // Cat management (add, remove, update) for charity workers
 router.post("/cat", verify, controller.addCat);
-router.get("/cat/:id", verify, controller.getCat);
-router.put("/cat/:id", verify, controller.updateCat);
+router.get("/cat/:id", verify, controller.getCat); 
+router.put("/cat/:id", verify, controller.updateCat); //<--
 router.delete("/cat/:id", verify, controller.removeCat);
 
 // Public access to cat listings
 router.get("/cats", controller.getAllCats);
-router.get("/search/:keyword", controller.searchCats);
+router.get("/search/:keyword", controller.searchCats);   //<---
 
 // Invalid access
 router.use((req, res, next) => {

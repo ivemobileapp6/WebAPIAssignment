@@ -57,7 +57,27 @@ async getCat(req, res) { // /cat (GET)
     res.status(500).send({ status: "Failed", message: err.message });
   }
 },
-
+// Update a cat based on id
+  async updateCat(req, res) {
+  const catId = req.params.id;
+  const { age, breed, gender, description, intakeDate, imageUrl } = req.body;
+  try {
+    const cat = await catsm.findById(catId);
+    if (!cat) {
+      return res.status(404).send({ status: "Failed", message: "Cat not found" });
+    }
+    cat.age = age;
+    cat.breed = breed;
+    cat.gender = gender;
+    cat.description = description;
+    cat.intakeDate = intakeDate;
+    cat.imageUrl = imageUrl;
+    const updatedCat = await cat.save();
+    res.send(updatedCat);
+  } catch (err) {
+    res.status(500).send({ status: "Failed", message: err.message });
+  }
+}
   // List all the cat in the database
 
   async getAllCats(req, res, next) {
