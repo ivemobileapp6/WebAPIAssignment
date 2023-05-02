@@ -7,6 +7,11 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  userType: {
+    type: String,
+    required: true,
+    enum: ['charity_worker', 'public_user'],
+  },
   email:{
     type: String,
     required: true,
@@ -20,8 +25,12 @@ const userSchema = new Schema({
   date:{
     type: String,
     default: Date.now,
-  }
+  },
+  phoneNumber: {
+    type: String,
+    trim: true,
+  },
 });
 
-module.exports = mongoose.model("Userm", userSchema);
+module.exports = mongoose.model("userm", userSchema);
 

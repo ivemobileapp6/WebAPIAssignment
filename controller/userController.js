@@ -1,5 +1,5 @@
 const mongoClient = require("mongodb").MongoClient
-const Userm = require("../model/Userm")
+const userm = require("../model/userm")
 const bcrypt = require("bcryptjs")
 const Joi = require("@hapi/joi");
 const { registerValidation } = require('../controller/validation');
@@ -12,7 +12,7 @@ const userController = {
   async getAllUser(req, res, next) {
     let users;
     try {
-      users = await Userm.find();
+      users = await userm.find();
     } catch (err) {
       console.log(err);
     }
@@ -27,15 +27,16 @@ const userController = {
   async addUser1(req, res, next) {
     const { error } = registerValidation(req.body);
     if (error) return res.status(400).send(error.details[0].message);
-    const emailExist = await Userm.findOne({ email: req.body.email });
+    const emailExist = await userm.findOne({ email: req.body.email });
     if (emailExist) return res.status(400).send("Email already exists");
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
-    const { name, email, password } = req.body;
-    const user = new Userm({
+    const { name, email, password, phonenumber } = req.body;
+    const user = new userm({
       name: req.body.name,
       email: req.body.email,
       password: hashedPassword,
+      phonenumber:req.body.phonenumber
     });
     try {
       const savedUser = await user.save();
@@ -50,7 +51,7 @@ const userController = {
   async auth(req, res) {
     const { error } = loginValidation(req.data);
     if (error) return res.status(400).send(error.details[0].message);
-    const user = await Userm.findOne({ name: req.body.name });
+    const user = await userm.findOne({ name: req.body.name });
     if (!user) return res.status(400).send("Invalid Email");
 
     const validPass = await bcrypt.compare(req.body.password, user.password);
@@ -69,7 +70,7 @@ const userController = {
     const updatedEmail = req.body.email;
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
     const updatedPassword = hashedPassword
-    await Userm.findOneAndUpdate({ _id: req.params.id}, { $set: {name:updatedName,                                  email:updatedEmail,                                 password: hashedPassword                            }
+    await userm.findOneAndUpdate({ _id: req.params.id}, { $set: {name:updatedName,                                  email:updatedEmail,                                 password: hashedPassword                            }
   }).then(result=>{
       res.status(200).json({
         updated:req.body
@@ -87,7 +88,7 @@ const userController = {
   async removeUser(req, res) {
     const id = req.params.id;
     try {
-      const result = await Userm.findByIdAndDelete(id);
+      const result = await userm.findByIdAndDelete(id);
       res.send({ "t": 'remove an user' });
     } catch (error) {
       res.status(400).send({ status: "Failed", "msg": "Failed to remove user" });
