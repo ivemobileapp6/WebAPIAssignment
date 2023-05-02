@@ -1,8 +1,12 @@
 const express = require("express");
+const mongoose = require('mongoose');
+
+const app = express();
+
 const Route = require("./route/route");
 // const UserRoute = require("./route/user");
-const mongoose = require('mongoose');
-const app = express();
+
+
 const fetch = require("node-fetch")
 
 mongoose.set('strictQuery', true)
