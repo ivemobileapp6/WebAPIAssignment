@@ -24,20 +24,26 @@ const userController = {
 
   // Add an user 
 
-  async addUser1(req, res, next) {
+  async addUser(req, res) {
     const { error } = registerValidation(req.body);
     if (error) return res.status(400).send(error.details[0].message);
     const emailExist = await userm.findOne({ email: req.body.email });
     if (emailExist) return res.status(400).send("Email already exists");
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
-    const { name, email, password, phonenumber } = req.body;
-    const user = new userm({
-      name: req.body.name,
-      email: req.body.email,
-      password: hashedPassword,
-      phonenumber:req.body.phonenumber
-    });
+    const { name, email, password, phonenumber, userType, staffKey } = req.body;
+    //const mySecret = process.env['staffKey']; 
+    //console.log(mySecret);
+  if (userType === 'staff' && staffKey !== mySecret) {
+    return res.status(403).json({ message: 'Forbidden' });
+  }
+  const user = new userm({
+    name,
+    email,
+    password: hashedPassword,
+    phonenumber,
+    userType: userType || 'public', 
+  });
     try {
       const savedUser = await user.save();
       res.status(200).send({ user: savedUser._id });
@@ -48,18 +54,35 @@ const userController = {
 
   // Authenticate an user and return a Key
   
+  // async auth(req, res) {
+  //   const { error } = loginValidation(req.data);
+  //   if (error) return res.status(400).send(error.details[0].message);
+  //   const user = await userm.findOne({ name: req.body.name });
+  //   if (!user) return res.status(400).send("Invalid Email");
+
+  //   const validPass = await bcrypt.compare(req.body.password, user.password);
+  //   if (!validPass) return res.status(400).send("Invalid Password");
+
+  //   const token = JWT.sign({ _id: user._id }, process.env.TOKEN_SECRET)
+  //   res.send(token);
+  // },
+
   async auth(req, res) {
-    const { error } = loginValidation(req.data);
-    if (error) return res.status(400).send(error.details[0].message);
-    const user = await userm.findOne({ name: req.body.name });
-    if (!user) return res.status(400).send("Invalid Email");
+  const { error } = loginValidation(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
 
-    const validPass = await bcrypt.compare(req.body.password, user.password);
-    if (!validPass) return res.status(400).send("Invalid Password");
+  const user = await userm.findOne({ name: req.body.name });
+  if (!user) return res.status(400).send("Invalid Email");
 
-    const token = JWT.sign({ _id: user._id }, process.env.TOKEN_SECRET)
-    res.send(token);
-  },
+  const validPass = await bcrypt.compare(req.body.password, user.password);
+  if (!validPass) return res.status(400).send("Invalid Password");
+
+  // Generate the JWT token using the generateToken function
+  const token = generateToken(user);
+
+  // Send the generated token in the response
+  res.send(token);
+},
 
   // Update an user's info 
   

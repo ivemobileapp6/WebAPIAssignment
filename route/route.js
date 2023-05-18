@@ -2,8 +2,10 @@ const express = require("express")
 const router = express.Router()
 const filmRoute = require('./cats.js')
 const userRoute = require('./user.js')
+const upload = require('../config/uploadPhotos.js')
 
-
+router.get("/getcat/:id", filmRoute);
+router.post("/addcat", filmRoute);
 router.get('/filmrecord/:keyword', filmRoute)
 router.post('/film', filmRoute)
 router.get('/film/:film', filmRoute)
