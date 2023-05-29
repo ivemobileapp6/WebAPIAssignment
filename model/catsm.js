@@ -9,7 +9,7 @@ const catSchema = new Schema({
   //weight: { type: Number},
   description: { type: String },
   //intakeDate: { type: Date},
-  imageUrl: { type: String },
+  // imageUrl: { type: String },
   photos: [{ type: String }],
   //imageAltText: { type: String },
   //specialNeeds: { type: String },

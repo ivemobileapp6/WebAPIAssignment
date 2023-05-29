@@ -25,7 +25,6 @@ module.exports = function (req, res, next) {
     const verified = JWT.verify(token, process.env.TOKEN_SECRET, { clockTimestamp: Math.floor(Date.now() / 1000) });
     // Verify the token's signature and expiration time.
     // If the token is expired, the "jwt.verify()" method will throw an error.
-
     req.user = verified;
     next();
   } catch (err) {

@@ -1,0 +1,274 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Back End Demonstration API
+  description: A sample blog API
+  contact:
+    name: Chan Yam
+    email: fongcq1@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/license/LICENSE-2.0.html'
+servers:
+  - url: 'https://webapiassignment.ivemobileapp6.repl.co'
+    description: Development server
+
+tags:
+  - name: Users
+    description: API endpoints for user management.
+  - name: Articles
+    description: Access and perform CRUD operations on blog entries.
+  - name: Cat
+    description: Access and perform CRUD operations on cats.
+
+paths:
+  /cat:
+    get:
+      tags:
+        - Cat
+      description: Get all cats
+    post:
+      tags:
+        - Cat
+      description: Add a new cat
+      requestBody:
+        description: All new article data
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                age:
+                  type: integer
+                breed:
+                  type: string
+                gender:
+                  type: string
+                description:
+                  type: string
+              required:
+                - age
+                - breed
+                - gender
+
+  /cat/{catId}:
+    put:
+      tags:
+        - Cat
+      description: Update an existing cat by providing the cat ID and the new information.
+      parameters:
+        - in: path
+          name: catId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                age:
+                  type: integer
+                breed:
+                  type: string
+                gender:
+                  type: string
+                description:
+                  type: string
+                imageUrl:
+                  type: string
+              required:
+                - age
+                - breed
+                - gender
+      responses:
+        200:
+          description: The cat object was successfully updated.
+        404:
+          description: The cat was not found with the provided ID.
+        500:
+          description: An error occurred while processing the request.
+    delete:
+      tags:
+        - Cat
+      description: Remove a cat by providing its ID.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: The cat was successfully removed.
+        404:
+          description: The cat was not found with the provided ID.
+        400:
+          description: Failed to remove the cat.
+
+  /auth/google:
+    post:
+      tags:
+        - Users
+      description: Authenticate a user using Google OAuth2.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_token:
+                  type: string
+      responses:
+        200:
+          description: Successfully authenticated user and returned token.
+        400:
+          description: Invalid Google ID token.
+
+  /users:
+    get:
+      tags:
+        - Users
+      description: Retrieve all users from the database.
+      responses:
+        200:
+          description: Successfully retrieved all users.
+        404:
+          description: No users found.
+
+    post:
+      tags:
+        - Users
+      description: Add a new user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                phonenumber:
+                  type: string
+                userType:
+                  type: string
+                staffKey:
+                  type: string
+      responses:
+        200:
+          description: Successfully added a new user.
+        400:
+          description: Validation failed or email already exists.
+        403:
+          description: Forbidden.
+
+  /auth/login:
+    post:
+      tags:
+        - Users
+      description: Authenticate a user by email and password.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: Successfully authenticated user and returned token.
+        400:
+          description: Invalid email or password.
+
+  /users/{id}/favorite:
+    post:
+      tags:
+        - Users
+      description: Add a favorite cat to a user by user ID and cat ID.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                catId:
+                  type: string
+      responses:
+        200:
+          description: Successfully added a cat to favorites.
+        404:
+          description: User not found.
+        500:
+          description: An error occurred while updating favorites.
+
+  /users/{id}:
+    put:
+      tags:
+        - Users
+      description: Update a user's information by user ID.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                favourites:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        200:
+          description: Successfully updated user information.
+        500:
+          description: An error occurred while updating user information.
+
+    delete:
+      tags:
+        - Users
+      description: Remove a user by user ID.
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Successfully removed a user.
+        400:
+          description: Failed to remove user.

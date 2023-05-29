@@ -1,0 +1,69 @@
+openapi: 3.0.0
+info: 
+  version: 1.0.0
+  title: Back End Demonstration API
+  description: A sample blog API
+  contact: 
+    name: Chan Yam  
+    email: fongcq1@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/license/LICENSE-2.0.html'
+servers:
+  - url: 'https://webapiassignment.ivemobileapp6.repl.co'
+    description: Development server
+
+tags:
+  - name: Users 
+    description: API endpoints for user management.
+  - name: Articles
+    description: Access and perform CRUD operations on blog entries.
+
+paths:
+  /articles:
+    get:
+      tags:
+        - Articles
+      description:
+        Get all articles
+    post:
+      tags:
+        - Articles
+      description:
+        Add a new article
+      requestBody:
+        description: All new article data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ./articles.json#/definitions/article
+              
+  /articles/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: Number id of the article
+    get:
+      tags:
+        - Articles
+      description:
+        Get article by ID
+      responses:
+        '200':
+          description: View of an article record
+        '404':
+          description: Article was not found in the DB
+    put:
+      tags: 
+        - Articles
+      description:
+        Update article by ID
+    delete:
+      tags:
+        - Articles
+      description:
+        Delete article by ID
