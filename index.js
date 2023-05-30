@@ -4,7 +4,7 @@ const cors = require('cors');
 const http = require('http');
 const socketIO = require('socket.io');
 const swaggerUi = require('swagger-ui-express');
-const YAML = require('yamljs')
+const YAML = require('yamljs');
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
@@ -27,13 +27,6 @@ mongoose
   .then(() => console.log('Connected To Database'))
   .catch((err) => console.log(err));
 
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use('/uploads', express.static('uploads'));
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
-app.use('/', Route);
-
 const corsOptions = {
   origin: 'https://webapifrontend.ivemobileapp6.repl.co',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -42,7 +35,11 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static('uploads'));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
+app.use('/', Route);
 
 io.on('connection', (socket) => {
   console.log(`User Connected: ${socket.id}`);
